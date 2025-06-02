@@ -1,0 +1,155 @@
+:root {
+    --primary-color: #ff69b4;
+    --secondary-color: #ffb6c1;
+    --accent-color: #fff0f5;
+    --text-color: #4a4a4a;
+    --error-color: #ff4646;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: var(--accent-color);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 900px;
+}
+
+.registro-form {
+    background-color: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 105, 180, 0.1);
+}
+
+h2 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 0;
+    position: relative;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--secondary-color);
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 105, 180, 0.2);
+}
+
+input.error, select.error {
+    border-color: var(--error-color);
+}
+
+.error-message {
+    color: var(--error-color);
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    min-height: 16px;
+}
+
+.password-requirements {
+    color: var(--text-color);
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    opacity: 0.7;
+}
+
+
+
+.form-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: flex-end;
+}
+
+button {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-cancelar {
+    background-color: #f8f8f8;
+    color: var(--text-color);
+}
+
+.btn-guardar {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-cancelar:hover {
+    background-color: #ebebeb;
+}
+
+.btn-guardar:hover {
+    background-color: #ff4da6;
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+    .container {
+        max-width: 600px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .registro-form {
+        padding: 20px;
+    }
+
+    .form-buttons {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+    }
+} 

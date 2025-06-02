@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Registro</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <form class="registro-form" id="registroForm" novalidate>
+            <h2>Formulario de Registro</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="nombre">Nombre Completo</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre completo" required>
+                    <span class="error-message" id="nombreError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="rut">Rut</label>
+                    <input type="text" id="rut" name="rut" placeholder="Ingrese su RUT" required>
+                    <span class="error-message" id="rutError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="fecha">Fecha de Nacimiento</label>
+                    <input type="date" id="fecha" name="fecha" required>
+                    <span class="error-message" id="fechaError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="curriculum">Curriculum Vitae</label>
+                    <select id="curriculum" name="curriculum" required>
+                        <option value="">Seleccionar</option>
+                    </select>
+                    <span class="error-message" id="curriculumError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+                    <span class="error-message" id="emailError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="genero">Género</label>
+                    <select id="genero" name="genero" required>
+                        <option value="">Seleccione...</option>
+                        <option value="masculino">Masculino</option>
+                        <option value="femenino">Femenino</option>
+                    </select>
+                    <span class="error-message" id="generoError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="contrasena">Contraseña</label>
+                    <input type="password" id="contrasena" name="contrasena" placeholder="********" required>
+                    <span class="error-message" id="contrasenaError"></span>
+                    <small class="password-requirements">
+                        La contraseña debe tener entre 6 y 12 caracteres, incluir una mayúscula, una minúscula y un número
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="repetir-contrasena">Repetir Contraseña</label>
+                    <input type="password" id="repetir-contrasena" name="repetirContrasena" placeholder="********" required>
+                    <span class="error-message" id="repetirContrasenaError"></span>
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
+                <button type="submit" class="btn-guardar" id="btnGuardar">Guardar</button>
+            </div>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
