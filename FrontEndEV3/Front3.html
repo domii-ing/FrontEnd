@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebApp de Gestión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .data-table-container {
+            overflow-x: auto; 
+        }
+        .message-box {
+            position: fixed; 
+            top: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            padding: 1rem 2rem;
+            border-radius: 0.5rem; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            z-index: 1000; 
+            display: none;
+        }
+        .message-box.success {
+            background-color: #d4edda; 
+            color: #96f6ad; 
+            border: 1px solid #c3e6cb; 
+        }
+        .message-box.error {
+            background-color: #f8d7f6; 
+            color: #ee57fc; 
+            border: 1px solid #f1aeea; 
+        }
+        .input-error {
+            border-color: #c971f8 !important; 
+            box-shadow: 0 0 0 1px #b071f8 !important; 
+        }
+        .error-message {
+            color: #f871c2; 
+            font-size: 0.875rem; 
+            margin-top: 0.25rem; 
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.datatables.net/v/dt/dt-2.3.2/datatables.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.3.2/datatables.min.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 flex flex-col min-h-screen">
+
+    <header class="bg-pink-600 text-white p-4 shadow-md rounded-b-lg">
+        <div class="container mx-auto flex justify-start items-center">
+            <nav>
+                <ul class="flex space-x-4">
+                    <li><a href="#" id="nav-inicio" class="hover:text-pink-200 transition duration-300 font-bold">Inicio</a></li>
+                    <li><a href="#" id="nav-gestion-usuarios" class="hover:text-pink-200 transition duration-300">Gestión Usuarios</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-6 flex-grow">
+        <section id="inicio-section" class="bg-white p-8 rounded-lg shadow-lg mb-8">
+            <h2 class="text-2xl font-semibold text-pink-700 mb-4">Sistema de Gestión Usuarios</h2>
+
+            <div class="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-4 mb-6">
+                <div class="relative inline-block text-gray-700">
+                    <label for="data-selector" class="block text-sm font-medium text-gray-700 mb-1">Seleccione Datos</label>
+                    <select id="data-selector" class="block appearance-none w-full bg-white border border-gray-300 py-2 px-4 pr-8 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm rounded-md">
+                        <option value="users">Usuarios</option>
+                        <option value="posts">Publicaciones</option> 
+                        <option value="comments">Comentarios</option>
+                        <option value="albums">Álbumes</option>
+                        <option value="photos">Fotos</option>
+                        <option value="todos">Tareas (To-Do's)</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700 mt-6">
+                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                    </div>
+                </div>
+                <button id="cargar-datos-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 shadow-md">
+                    Cargar Datos
+                </button>
+            </div>
+
+            <div class="data-table-container bg-white p-4 rounded-lg border border-gray-200 shadow-inner">
+                <table id="data-table" class="display w-full text-sm text-left text-gray-500">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="gestion-usuarios-section" class="bg-white p-8 rounded-lg shadow-lg mb-8 hidden">
+            <h2 class="text-2xl font-semibold text-pink-700 mb-4">Gestión Usuarios</h2>
+
+            <form id="user-form" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div>
+                    <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Nombre completo"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                    <p id="nombre-error" class="error-message hidden">El nombre es requerido.</p>
+                </div>
+
+                <div>
+                    <label for="usuario" class="block text-sm font-medium text-gray-700">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" placeholder="Nombre de usuario"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                    <p id="usuario-error" class="error-message hidden">El usuario es requerido.</p>
+                </div>
+
+                <div>
+                    <label for="fecha-ingreso" class="block text-sm font-medium text-gray-700">Fecha Ingreso</label>
+                    <input type="text" id="fecha-ingreso" name="fecha-ingreso" placeholder="dd/MM/yyyy"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                    <p id="fecha-ingreso-error" class="error-message hidden">Formato de fecha inválido (dd/MM/yyyy).</p>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="email" name="email" placeholder="ejemplo@dominio.com"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                    <p id="email-error" class="error-message hidden">Formato de email inválido.</p>
+                </div>
+
+                <div>
+                    <label for="sitio-web" class="block text-sm font-medium text-gray-700">Sitio Web</label>
+                    <input type="text" id="sitio-web" name="sitio-web" placeholder="https://www.misitioweb.com"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                    <p id="sitio-web-error" class="error-message hidden"></p> 
+                </div>
+
+                <div>
+                    <label for="genero" class="block text-sm font-medium text-gray-700">Género (Opcional)</label>
+                    <input type="text" id="genero" name="genero" placeholder="Masculino, Femenino, Otro"
+                           class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm">
+                    <p id="genero-error" class="error-message hidden"></p>
+
+                <div class="md:col-span-2 lg:col-span-3 flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancelar-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md transition duration-300 shadow-md">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="guardar-btn" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 shadow-md">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white p-4 text-center mt-8 rounded-t-lg">
+        <div class="container mx-auto">
+            <p>&copy; 2025 WebApp de Gestión. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <div id="message-box" class="message-box"></div>
+
+    <script>
+
+        function showMessage(message, type = 'success') {
+            const msgBox = $('#message-box'); 
+            msgBox.removeClass('success error').addClass(type); 
+            msgBox.text(message); 
+            msgBox.fadeIn(300).delay(3000).fadeOut(300); 
+        }
+
+        let dataTableInstance = null;
+
+        async function loadData(dataType) {
+            const apiUrl = `https://jsonplaceholder.typicode.com/${dataType}`;
+
+            try {
+                showMessage(`Cargando datos de ${dataType}...`, 'success');
+
+                const response = await fetch(apiUrl);
+
+                if (!response.ok) {
+                    throw new Error(`¡Error HTTP! Estado: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (dataTableInstance) {
+                    dataTableInstance.destroy(); 
+                    $('#data-table thead').empty(); 
+                    $('#data-table tbody').empty(); 
+                }
+
+                if (data.length === 0) {
+                    showMessage('No se encontraron datos para la selección.', 'error');
+                    return; 
+                }
+                const columns = Object.keys(data[0]).map(key => ({
+                    data: key,
+                    title: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim()
+                }));
+
+                dataTableInstance = $('#data-table').DataTable({
+                    data: data, 
+                    columns: columns, 
+                    responsive: true, 
+                    "ordering": false,   
+                    "searching": false,  
+                    "paging": false,     
+                    "info": false,       
+                    language: {
+                        url: '//cdn.datatables.net/plug-ins/2.0.8/i18n/es-ES.json' 
+                    }
+                });
+                showMessage(`Datos de ${dataType} cargados exitosamente.`, 'success');
+
+            } catch (error) {
+                console.error('Error al cargar los datos:', error);
+                showMessage(`Error al cargar los datos: ${error.message}`, 'error');
+            }
+        }
+
+        function showSection(sectionId) {
+            $('#inicio-section').addClass('hidden');
+            $('#gestion-usuarios-section').addClass('hidden');
+
+            $(`#${sectionId}`).removeClass('hidden');
+
+            $('#nav-inicio, #nav-gestion-usuarios').removeClass('font-bold'); 
+            if (sectionId === 'inicio-section') {
+                $('#nav-inicio').addClass('font-bold');
+            } else if (sectionId === 'gestion-usuarios-section') {
+                $('#nav-gestion-usuarios').addClass('font-bold');
+            }
+        }
+
+        function clearUserForm() {
+            $('#user-form')[0].reset(); 
+            $('#user-form input').removeClass('input-error');
+            $('#user-form .error-message').addClass('hidden').text('');
+        }
+
+        function validateField(inputElement, errorMessageElement, validationFn, required = false) {
+            const value = inputElement.val().trim(); 
+            let isValid = true;
+            let message = '';
+
+            if (required && value === '') {
+                isValid = false;
+                message = 'Este campo es requerido.';
+            } else if (!validationFn(value)) {
+                isValid = false;
+
+                if (inputElement.attr('id') === 'fecha-ingreso') {
+                    message = 'Formato de fecha inválido (dd/MM/yyyy).';
+                } else if (inputElement.attr('id') === 'email') {
+                    message = 'Formato de email inválido (nombreusuario@servidor.algo).';
+                }
+            }
+
+            if (!isValid) {
+                inputElement.addClass('input-error'); 
+                errorMessageElement.text(message).removeClass('hidden'); 
+            } else {
+                inputElement.removeClass('input-error'); 
+                errorMessageElement.addClass('hidden').text(''); 
+            }
+            return isValid;
+        }
+
+        function isNotEmpty(value) {
+            return value !== '';
+        }
+
+        function isValidDate(dateString) {
+            if (dateString === '') return true; 
+            const regex = /^\d{2}\/\d{2}\/\d{4}$/; 
+            if (!regex.test(dateString)) return false;
+
+            const parts = dateString.split('/');
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10);
+            const year = parseInt(parts[2], 10);
+
+            const date = new Date(year, month - 1, day); 
+            return date.getFullYear() === year && date.getMonth() + 1 === month && date.getDate() === day;
+        }
+
+        function isValidEmail(email) {
+            if (email === '') return true; 
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
+        $(document).ready(function() {
+            loadData('users');
+
+            $('#cargar-datos-btn').on('click', function() {
+                const selectedType = $('#data-selector').val();
+                loadData(selectedType);
+            });
+
+            $('#nav-inicio').on('click', function(e) {
+                e.preventDefault(); 
+                showSection('inicio-section'); 
+            });
+
+            $('#nav-gestion-usuarios').on('click', function(e) {
+                e.preventDefault(); 
+                showSection('gestion-usuarios-section'); 
+            });
+
+            $('#cancelar-btn').on('click', function() {
+                clearUserForm(); 
+                showMessage('Formulario de usuario limpiado.', 'success');
+            });
+
+            $('#user-form').on('submit', function(e) {
+                e.preventDefault(); 
+
+                let formIsValid = true; 
+
+                if (!validateField($('#nombre'), $('#nombre-error'), isNotEmpty, true)) {
+                    formIsValid = false;
+                }
+                if (!validateField($('#usuario'), $('#usuario-error'), isNotEmpty, true)) {
+                    formIsValid = false;
+                }
+                if (!validateField($('#fecha-ingreso'), $('#fecha-ingreso-error'), isValidDate, true)) {
+                    formIsValid = false;
+                }
+                if (!validateField($('#email'), $('#email-error'), isValidEmail, true)) {
+                    formIsValid = false;
+                }
+
+                if (formIsValid) {
+                    showMessage('¡Datos de usuario guardados correctamente (simulado)!', 'success');
+                    clearUserForm(); 
+                } else {
+                    showMessage('Por favor, corrige los errores en el formulario de usuario.', 'error');
+                }
+            });
+
+            $('#nombre').on('blur', function() { validateField($(this), $('#nombre-error'), isNotEmpty, true); });
+            $('#usuario').on('blur', function() { validateField($(this), $('#usuario-error'), isNotEmpty, true); });
+            $('#fecha-ingreso').on('blur', function() { validateField($(this), $('#fecha-ingreso-error'), isValidDate, true); });
+            $('#email').on('blur', function() { validateField($(this), $('#email-error'), isValidEmail, true); });
+
+        });
+    </script>
+</body>
+</html>
